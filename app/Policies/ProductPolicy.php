@@ -13,7 +13,8 @@ class ProductPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true; // Allow authenticated users to view products
+        // Allow users with admin role to view their own products
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,8 +22,8 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        // Allow user to view product if it belongs to their business
-        return $product->business_id == $user->id || $user->hasRole('admin');
+        // Allow users with admin role to view their own product
+        return $user->hasRole('admin') && $product->user_id === $user->id;
     }
 
     /**
@@ -30,7 +31,8 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return true; // Allow authenticated users to create products
+        // Allow users with admin role to create products
+        return $user->hasRole('admin');
     }
 
     /**
@@ -38,8 +40,8 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        // Allow user to update product if it belongs to their business
-        return $product->business_id == $user->id || $user->hasRole('admin');
+        // Allow users with admin role to update their own product
+        return $user->hasRole('admin') && $product->user_id === $user->id;
     }
 
     /**
@@ -47,8 +49,8 @@ class ProductPolicy
      */
     public function delete(User $user, Product $product): bool
     {
-        // Allow user to delete product if it belongs to their business
-        return $product->business_id == $user->id || $user->hasRole('admin');
+        // Allow users with admin role to delete their own product
+        return $user->hasRole('admin') && $product->user_id === $user->id;
     }
 
     /**

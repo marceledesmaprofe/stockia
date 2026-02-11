@@ -13,7 +13,8 @@ class CategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true; // Allow authenticated users to view categories
+        // Allow users with admin role to view their own categories
+        return $user->hasRole('admin');
     }
 
     /**
@@ -21,8 +22,8 @@ class CategoryPolicy
      */
     public function view(User $user, Category $category): bool
     {
-        // Allow user to view category if it belongs to their business
-        return $category->business_id == $user->id || $user->hasRole('admin');
+        // Allow users with admin role to view their own category
+        return $user->hasRole('admin') && $category->user_id === $user->id;
     }
 
     /**
@@ -30,7 +31,8 @@ class CategoryPolicy
      */
     public function create(User $user): bool
     {
-        return true; // Allow authenticated users to create categories
+        // Allow users with admin role to create categories
+        return $user->hasRole('admin');
     }
 
     /**
@@ -38,8 +40,8 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): bool
     {
-        // Allow user to update category if it belongs to their business
-        return $category->business_id == $user->id || $user->hasRole('admin');
+        // Allow users with admin role to update their own category
+        return $user->hasRole('admin') && $category->user_id === $user->id;
     }
 
     /**
@@ -47,8 +49,8 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category): bool
     {
-        // Allow user to delete category if it belongs to their business
-        return $category->business_id == $user->id || $user->hasRole('admin');
+        // Allow users with admin role to delete their own category
+        return $user->hasRole('admin') && $category->user_id === $user->id;
     }
 
     /**

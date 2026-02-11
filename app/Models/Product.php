@@ -16,7 +16,7 @@ class Product extends Model
         'current_stock',
         'sale_price',
         'status',
-        'business_id',
+        'user_id',
         'category_id'
     ];
 
@@ -24,7 +24,7 @@ class Product extends Model
         'sale_price' => 'decimal:2',
         'current_stock' => 'integer',
         'status' => 'boolean',
-        'business_id' => 'integer',
+        'user_id' => 'integer',
         'category_id' => 'integer'
     ];
 
@@ -50,7 +50,7 @@ class Product extends Model
             'current_stock',
             'sale_price',
             'status',
-            'business_id',
+            'user_id',
             'created_at',
             'updated_at'
         ];

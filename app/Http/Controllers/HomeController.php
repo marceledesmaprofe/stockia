@@ -16,30 +16,34 @@ class HomeController extends Controller
     public function index()
     {
         try {
-            // Get statistics for the dashboard
-            $totalProducts = Product::count();
-            $totalCategories = Category::count();
-            $activeProducts = Product::where('status', true)->count();
-            $inactiveProducts = Product::where('status', false)->count();
-            $lowStockProducts = Product::where('current_stock', '<', 10)->count();
-            
+            // Get statistics for the dashboard (only for the authenticated user)
+            $totalProducts = Product::where('user_id', auth()->id())->count();
+            $totalCategories = Category::where('user_id', auth()->id())->count();
+            $activeProducts = Product::where('user_id', auth()->id())->where('status', true)->count();
+            $inactiveProducts = Product::where('user_id', auth()->id())->where('status', false)->count();
+            $lowStockProducts = Product::where('user_id', auth()->id())->where('current_stock', '<', 10)->count();
+
             // Get top categories by product count
-            $topCategories = Category::withCount('products')
+            $topCategories = Category::where('user_id', auth()->id())
+                ->withCount(['products' => function($query) {
+                    $query->where('user_id', auth()->id());
+                }])
                 ->orderByDesc('products_count')
                 ->take(5)
                 ->get();
-                
+
             // Get recently added products
             $recentProducts = Product::with('category')
+                ->where('user_id', auth()->id())
                 ->latest()
                 ->take(5)
                 ->get();
-                
+
             return view('dashboard', compact(
-                'totalProducts', 
-                'totalCategories', 
-                'activeProducts', 
-                'inactiveProducts', 
+                'totalProducts',
+                'totalCategories',
+                'activeProducts',
+                'inactiveProducts',
                 'lowStockProducts',
                 'topCategories',
                 'recentProducts'

@@ -13,12 +13,12 @@ class Category extends Model
         'name',
         'description',
         'status',
-        'business_id'
+        'user_id'
     ];
 
     protected $casts = [
         'status' => 'boolean',
-        'business_id' => 'integer'
+        'user_id' => 'integer'
     ];
 
     // Relationship with products
@@ -39,7 +39,7 @@ class Category extends Model
             'name',
             'description',
             'status',
-            'business_id',
+            'user_id',
             'product_count',
             'created_at',
             'updated_at'

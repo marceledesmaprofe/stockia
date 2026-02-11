@@ -20,7 +20,7 @@ class CategoryController extends Controller
         $this->authorize('viewAny', Category::class);
 
         try {
-            $query = Category::with('products');
+            $query = Category::with('products')->where('user_id', auth()->id());
 
             // Search functionality
             if ($request->filled('search')) {
@@ -75,6 +75,9 @@ class CategoryController extends Controller
                 'business_id.min' => 'Business ID must be at least 1.'
             ]);
 
+            // Add the authenticated user's ID to the validated data
+            $validatedData['user_id'] = auth()->id();
+            
             $category = Category::create($validatedData);
 
             return redirect()->route('categories.index')->with('success', 'Category "' . $category->name . '" created successfully.');
@@ -147,6 +150,9 @@ class CategoryController extends Controller
                 'business_id.min' => 'Business ID must be at least 1.'
             ]);
 
+            // Ensure the user_id is set to the authenticated user's ID
+            $validatedData['user_id'] = auth()->id();
+            
             $category->update($validatedData);
 
             return redirect()->route('categories.index')->with('success', 'Category "' . $category->name . '" updated successfully.');
@@ -196,7 +202,7 @@ class CategoryController extends Controller
         $this->authorize('viewAny', Category::class);
 
         $filename = 'categories_' . now()->format('Y-m-d_H-i-s') . '.csv';
-        return (new Category())->exportToCsv(Category::with('products'), $filename);
+        return (new Category())->exportToCsv(Category::with('products')->where('user_id', auth()->id()), $filename);
     }
 
     /**
@@ -207,6 +213,6 @@ class CategoryController extends Controller
         $this->authorize('viewAny', Category::class);
 
         $filename = 'categories_' . now()->format('Y-m-d_H-i-s') . '.pdf';
-        return (new Category())->exportToPdf(Category::with('products'), $filename, 'Categories Report');
+        return (new Category())->exportToPdf(Category::with('products')->where('user_id', auth()->id()), $filename, 'Categories Report');
     }
 }

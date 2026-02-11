@@ -21,7 +21,7 @@ class ProductController extends Controller
         $this->authorize('viewAny', Product::class);
 
         try {
-            $query = Product::with('category');
+            $query = Product::with('category')->where('user_id', auth()->id());
 
             // Search functionality
             if ($request->filled('search')) {
@@ -115,6 +115,9 @@ class ProductController extends Controller
                 'business_id.min' => 'Business ID must be at least 1.'
             ]);
 
+            // Add the authenticated user's ID to the validated data
+            $validatedData['user_id'] = auth()->id();
+            
             $product = Product::create($validatedData);
 
             return redirect()->route('products.index')->with('success', 'Product "' . $product->name . '" created successfully.');
@@ -196,6 +199,9 @@ class ProductController extends Controller
                 'business_id.min' => 'Business ID must be at least 1.'
             ]);
 
+            // Ensure the user_id is set to the authenticated user's ID
+            $validatedData['user_id'] = auth()->id();
+            
             $product->update($validatedData);
 
             return redirect()->route('products.index')->with('success', 'Product "' . $product->name . '" updated successfully.');
@@ -238,7 +244,7 @@ class ProductController extends Controller
         $this->authorize('viewAny', Product::class);
 
         $filename = 'products_' . now()->format('Y-m-d_H-i-s') . '.csv';
-        return (new Product())->exportToCsv(Product::with('category'), $filename);
+        return (new Product())->exportToCsv(Product::with('category')->where('user_id', auth()->id()), $filename);
     }
 
     /**
@@ -249,6 +255,6 @@ class ProductController extends Controller
         $this->authorize('viewAny', Product::class);
 
         $filename = 'products_' . now()->format('Y-m-d_H-i-s') . '.pdf';
-        return (new Product())->exportToPdf(Product::with('category'), $filename, 'Products Report');
+        return (new Product())->exportToPdf(Product::with('category')->where('user_id', auth()->id()), $filename, 'Products Report');
     }
 }
