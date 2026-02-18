@@ -132,12 +132,11 @@ class SaleController extends Controller
                     ->where('user_id', auth()->id())
                     ->firstOrFail();
 
-                // Check stock availability
-                $currentStock = $this->getCurrentStock($product->id);
-                if ($currentStock < $productData['quantity']) {
+                // Check stock availability using current_stock field
+                if ($product->current_stock < $productData['quantity']) {
                     throw ValidationException::withMessages([
-                        "products.{$productData['product_id']}.quantity" => 
-                        "Insufficient stock for product '{$product->name}'. Available: {$currentStock}, Requested: {$productData['quantity']}"
+                        "products.{$productData['product_id']}.quantity" =>
+                        "Insufficient stock for product '{$product->name}'. Available: {$product->current_stock}, Requested: {$productData['quantity']}"
                     ]);
                 }
             }
@@ -165,6 +164,12 @@ class SaleController extends Controller
 
             // Register stock movements (SALIDA) for each product
             $sale->registerStockMovements();
+
+            // Update current_stock in products table
+            foreach ($validatedData['products'] as $productData) {
+                Product::where('id', $productData['product_id'])
+                    ->decrement('current_stock', $productData['quantity']);
+            }
 
             DB::commit();
 

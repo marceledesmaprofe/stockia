@@ -101,6 +101,10 @@ class Sale extends Model
                 $detail->quantity,
                 "Sale #{$this->id} - Anulled"
             );
+            
+            // Update current_stock in products table (restore stock)
+            Product::where('id', $detail->product_id)
+                ->increment('current_stock', $detail->quantity);
         }
     }
 }

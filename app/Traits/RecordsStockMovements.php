@@ -41,7 +41,6 @@ trait RecordsStockMovements
      * @param string|null $reference
      * @param int|null $userId
      * @return StockMovement
-     * @throws \RuntimeException
      */
     public function registerStockExit(
         int $productId,
@@ -49,14 +48,7 @@ trait RecordsStockMovements
         ?string $reference = null,
         ?int $userId = null
     ): StockMovement {
-        $currentStock = StockMovement::calculateStockForProduct($productId);
-
-        if ($currentStock < abs($quantity)) {
-            throw new \RuntimeException(
-                "Insufficient stock. Current: {$currentStock}, Requested: " . abs($quantity)
-            );
-        }
-
+        // Validation is done in the controller using current_stock field
         return $this->registerStockMovement(
             $productId,
             'SALIDA',
