@@ -5,6 +5,22 @@
             <div class="p-6 bg-white border-b border-gray-200">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6">New Sale</h2>
 
+                @if(session('error'))
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <ul class="list-disc list-inside">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('sales.store') }}" method="POST" id="sale-form">
                     @csrf
 
@@ -67,7 +83,8 @@
                         <div class="product-row grid grid-cols-12 gap-2 items-end">
                             <div class="col-span-5">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Product *</label>
-                                <select name="products[0][product_id]" class="product-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                                <input type="hidden" name="products[0][product_id]" class="product-id-input" value="">
+                                <select class="product-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                                     <option value="">Select a product...</option>
                                     @foreach($products as $product)
                                         <option value="{{ $product->id }}" data-price="{{ $product->sale_price }}" data-stock="{{ $product->current_stock }}">
@@ -147,7 +164,8 @@ document.addEventListener('DOMContentLoaded', function() {
         newRow.innerHTML = `
             <div class="col-span-5">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Product *</label>
-                <select name="products[${productIndex}][product_id]" class="product-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                <input type="hidden" name="products[${productIndex}][product_id]" class="product-id-input" value="">
+                <select class="product-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                     <option value="">Select a product...</option>
                     @foreach($products as $product)
                         <option value="{{ $product->id }}" data-price="{{ $product->sale_price }}" data-stock="{{ $product->current_stock }}">
@@ -184,6 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
         row.querySelector('.product-select').addEventListener('change', function() {
             const option = this.options[this.selectedIndex];
             const price = option.getAttribute('data-price');
+            const productId = this.value;
+            
+            // Update hidden input with product_id
+            row.querySelector('.product-id-input').value = productId;
+            
             if (price) {
                 row.querySelector('.unit-price-input').value = price;
                 calculateSubtotal(row);
@@ -213,11 +236,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add event listeners to initial row
-    document.querySelectorAll('.product-row').forEach(addRowEventListeners);
-    
+    document.querySelectorAll('.product-row').forEach(row => {
+        addRowEventListeners(row);
+        // Initialize hidden input with current select value
+        const select = row.querySelector('.product-select');
+        const hiddenInput = row.querySelector('.product-id-input');
+        if (select.value) {
+            hiddenInput.value = select.value;
+        }
+    });
+
     // Calculate initial subtotal
     document.querySelectorAll('.product-row').forEach(calculateSubtotal);
     calculateTotal();
+
+    // Debug: Log form data before submit
+    document.getElementById('sale-form').addEventListener('submit', function(e) {
+        const formData = new FormData(this);
+        
+        // Convert FormData to object properly for nested arrays
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            if (!data[key]) {
+                data[key] = value;
+            } else if (Array.isArray(data[key])) {
+                data[key].push(value);
+            } else {
+                data[key] = [data[key], value];
+            }
+        }
+        
+        console.log('=== FORM DATA ===');
+        console.log('Full form data:', JSON.stringify(data, null, 2));
+        
+        // Log products specifically
+        const products = [];
+        for (let [key, value] of formData.entries()) {
+            if (key.startsWith('products[')) {
+                console.log('Field:', key, 'Value:', value);
+            }
+        }
+        
+        console.log('=================');
+        
+        // Uncomment to prevent submit for debugging
+        // e.preventDefault();
+    });
 });
 </script>
 </x-app-layout>

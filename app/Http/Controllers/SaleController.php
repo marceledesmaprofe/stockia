@@ -89,6 +89,9 @@ class SaleController extends Controller
     {
         DB::beginTransaction();
         try {
+            \Log::info('Sale data:', $request->all());
+            \Log::info('Products input:', ['products' => $request->input('products')]);
+            
             $validatedData = $request->validate([
                 'customer_id' => 'nullable|exists:users,id',
                 'sale_date' => 'required|date',
@@ -121,18 +124,27 @@ class SaleController extends Controller
 
             // Calculate total
             $total = 0;
-            foreach ($validatedData['products'] as &$product) {
-                $product['subtotal'] = $product['quantity'] * $product['unit_price'];
-                $total += $product['subtotal'];
+            foreach ($validatedData['products'] as $key => $productItem) {
+                $validatedData['products'][$key]['subtotal'] = $productItem['quantity'] * $productItem['unit_price'];
+                $total += $validatedData['products'][$key]['subtotal'];
             }
 
             // Verify product ownership and stock availability
             foreach ($validatedData['products'] as $productData) {
                 $product = Product::where('id', $productData['product_id'])
                     ->where('user_id', auth()->id())
-                    ->firstOrFail();
+                    ->first();
+                
+                if (!$product) {
+                    \Log::error('Product not found or does not belong to user', ['product_id' => $productData['product_id'], 'user_id' => auth()->id()]);
+                    throw ValidationException::withMessages([
+                        "products.{$productData['product_id']}.product_id" => 
+                        "The selected product is invalid or does not belong to you."
+                    ]);
+                }
 
                 // Check stock availability using current_stock field
+                \Log::info('Stock check', ['product' => $product->name, 'current_stock' => $product->current_stock, 'requested' => $productData['quantity']]);
                 if ($product->current_stock < $productData['quantity']) {
                     throw ValidationException::withMessages([
                         "products.{$productData['product_id']}.quantity" =>
@@ -152,7 +164,8 @@ class SaleController extends Controller
             ]);
 
             // Create sale details
-            foreach ($validatedData['products'] as $productData) {
+            foreach ($validatedData['products'] as $key => $productData) {
+                \Log::info('Creating detail', ['key' => $key, 'productData' => $productData]);
                 SaleDetail::create([
                     'sale_id' => $sale->id,
                     'product_id' => $productData['product_id'],
