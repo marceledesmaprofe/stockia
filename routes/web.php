@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,10 @@ Route::middleware('auth')->group(function () {
     // Product and Category management routes
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
+
+    // Sales routes
+    Route::resource('sales', SaleController::class);
+    Route::patch('/sales/{id}/annul', [SaleController::class, 'annul'])->name('sales.annul');
 
     // Stock Movements History (read-only for audit)
     Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
