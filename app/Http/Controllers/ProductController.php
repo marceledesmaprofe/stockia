@@ -102,8 +102,7 @@ class ProductController extends Controller
                 'category_id' => 'nullable|exists:categories,id',
                 'current_stock' => 'required|integer|min:0|max:999999',
                 'sale_price' => 'required|numeric|min:0|max:999999.99',
-                'status' => 'required|boolean',
-                'business_id' => 'required|integer|min:1'
+                'status' => 'required|boolean'
             ], [
                 'name.required' => 'The product name is required.',
                 'name.max' => 'The product name may not be greater than 255 characters.',
@@ -111,8 +110,7 @@ class ProductController extends Controller
                 'current_stock.max' => 'Current stock is too large.',
                 'sale_price.min' => 'Sale price cannot be negative.',
                 'sale_price.max' => 'Sale price is too large.',
-                'category_id.exists' => 'The selected category is invalid.',
-                'business_id.min' => 'Business ID must be at least 1.'
+                'category_id.exists' => 'The selected category is invalid.'
             ]);
 
             // Add the authenticated user's ID to the validated data
@@ -186,8 +184,7 @@ class ProductController extends Controller
                 'category_id' => 'nullable|exists:categories,id',
                 'current_stock' => 'required|integer|min:0|max:999999',
                 'sale_price' => 'required|numeric|min:0|max:999999.99',
-                'status' => 'required|boolean',
-                'business_id' => 'required|integer|min:1'
+                'status' => 'required|boolean'
             ], [
                 'name.required' => 'The product name is required.',
                 'name.max' => 'The product name may not be greater than 255 characters.',
@@ -195,8 +192,7 @@ class ProductController extends Controller
                 'current_stock.max' => 'Current stock is too large.',
                 'sale_price.min' => 'Sale price cannot be negative.',
                 'sale_price.max' => 'Sale price is too large.',
-                'category_id.exists' => 'The selected category is invalid.',
-                'business_id.min' => 'Business ID must be at least 1.'
+                'category_id.exists' => 'The selected category is invalid.'
             ]);
 
             // Ensure the user_id is set to the authenticated user's ID

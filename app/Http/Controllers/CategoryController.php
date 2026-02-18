@@ -66,13 +66,11 @@ class CategoryController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name',
                 'description' => 'nullable|string|max:1000',
-                'status' => 'required|boolean',
-                'business_id' => 'required|integer|min:1'
+                'status' => 'required|boolean'
             ], [
                 'name.required' => 'The category name is required.',
                 'name.unique' => 'A category with this name already exists.',
-                'name.max' => 'The category name may not be greater than 255 characters.',
-                'business_id.min' => 'Business ID must be at least 1.'
+                'name.max' => 'The category name may not be greater than 255 characters.'
             ]);
 
             // Add the authenticated user's ID to the validated data
@@ -141,13 +139,11 @@ class CategoryController extends Controller
                     Rule::unique('categories')->ignore($category->id)
                 ],
                 'description' => 'nullable|string|max:1000',
-                'status' => 'required|boolean',
-                'business_id' => 'required|integer|min:1'
+                'status' => 'required|boolean'
             ], [
                 'name.required' => 'The category name is required.',
                 'name.unique' => 'A category with this name already exists.',
-                'name.max' => 'The category name may not be greater than 255 characters.',
-                'business_id.min' => 'Business ID must be at least 1.'
+                'name.max' => 'The category name may not be greater than 255 characters.'
             ]);
 
             // Ensure the user_id is set to the authenticated user's ID

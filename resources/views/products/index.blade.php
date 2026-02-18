@@ -128,14 +128,6 @@
                                         @endif
                                     </a>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <a href="{{ route('products.index', array_merge(request()->query(), ['sort_by' => 'business_id', 'sort_order' => request('sort_by') == 'business_id' && request('sort_order') == 'asc' ? 'desc' : 'asc'])) }}" class="hover:underline">
-                                        Business ID
-                                        @if(request('sort_by') == 'business_id')
-                                            <span>{{ request('sort_order') == 'asc' ? '↑' : '↓' }}</span>
-                                        @endif
-                                    </a>
-                                </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -154,7 +146,6 @@
                                             {{ $product->status ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $product->business_id }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div class="flex space-x-2">
                                             <a href="{{ route('products.show', $product->id) }}" class="text-blue-600 hover:text-blue-900">View</a>
@@ -169,7 +160,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500">No products found.</td>
+                                    <td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">No products found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

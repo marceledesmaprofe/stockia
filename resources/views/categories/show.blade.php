@@ -37,12 +37,7 @@
                                 </span>
                             </div>
                         </div>
-                        
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500">Business ID</h3>
-                            <p class="mt-1 text-gray-900">{{ $category->business_id }}</p>
-                        </div>
-                        
+
                         <div>
                             <h3 class="text-sm font-medium text-gray-500">Number of Products</h3>
                             <p class="mt-1 text-gray-900">{{ $category->products->count() }}</p>
