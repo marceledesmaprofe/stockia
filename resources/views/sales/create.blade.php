@@ -70,8 +70,11 @@
                                 <select name="products[0][product_id]" class="product-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                                     <option value="">Select a product...</option>
                                     @foreach($products as $product)
-                                        <option value="{{ $product->id }}" data-price="{{ $product->sale_price }}" data-stock="{{ $product->stock_movements()->sum(\DB::raw('CASE WHEN type = "ENTRADA" THEN quantity WHEN type = "SALIDA" THEN -quantity WHEN type = "AJUSTE" THEN quantity ELSE 0 END')) }}">
-                                            {{ $product->name }} (Stock: {{ $product->stock_movements()->sum(\DB::raw('CASE WHEN type = "ENTRADA" THEN quantity WHEN type = "SALIDA" THEN -quantity WHEN type = "AJUSTE" THEN quantity ELSE 0 END')) }})
+                                        @php
+                                            $currentStock = \App\Models\StockMovement::calculateStockForProduct($product->id);
+                                        @endphp
+                                        <option value="{{ $product->id }}" data-price="{{ $product->sale_price }}" data-stock="{{ $currentStock }}">
+                                            {{ $product->name }} (Stock: {{ $currentStock }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -150,8 +153,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <select name="products[${productIndex}][product_id]" class="product-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                     <option value="">Select a product...</option>
                     @foreach($products as $product)
-                        <option value="{{ $product->id }}" data-price="{{ $product->sale_price }}" data-stock="{{ $product->stock_movements()->sum(\DB::raw('CASE WHEN type = "ENTRADA" THEN quantity WHEN type = "SALIDA" THEN -quantity WHEN type = "AJUSTE" THEN quantity ELSE 0 END')) }}">
-                            {{ $product->name }} (Stock: {{ $product->stock_movements()->sum(\DB::raw('CASE WHEN type = "ENTRADA" THEN quantity WHEN type = "SALIDA" THEN -quantity WHEN type = "AJUSTE" THEN quantity ELSE 0 END')) }})
+                        @php
+                            $currentStock = \App\Models\StockMovement::calculateStockForProduct($product->id);
+                        @endphp
+                        <option value="{{ $product->id }}" data-price="{{ $product->sale_price }}" data-stock="{{ $currentStock }}">
+                            {{ $product->name }} (Stock: {{ $currentStock }})
                         </option>
                     @endforeach
                 </select>
