@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Exportable;
 
 class Product extends Model
@@ -28,16 +30,49 @@ class Product extends Model
         'category_id' => 'integer'
     ];
 
-    // Relationship with category
-    public function category()
+    /**
+     * Get the category that owns the product.
+     */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
     /**
+     * Get the user that owns the product.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get all stock movements for this product.
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    /**
+     * Get the current stock calculated from movements.
+     * This is the source of truth for stock quantity.
+     */
+    public function getCurrentStockFromMovementsAttribute(): int
+    {
+        return StockMovement::calculateStockForProduct($this->id);
+    }
+
+    /**
+     * Scope to filter products by user.
+     */
+    public function scopeForUser($query, int $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    /**
      * Get headers for CSV export
-     *
-     * @return array
      */
     public function getCsvHeaders(): array
     {

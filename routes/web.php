@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,10 @@ Route::middleware('auth')->group(function () {
     // Product and Category management routes
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
+
+    // Stock Movements History (read-only for audit)
+    Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
+    Route::get('/stock-movements/{id}', [StockMovementController::class, 'show'])->name('stock-movements.show');
 
     // Export routes
     Route::get('/products/export/csv', [ProductController::class, 'exportCsv'])->name('products.export.csv');
