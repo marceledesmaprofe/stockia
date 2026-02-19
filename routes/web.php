@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('sales', SaleController::class);
     Route::patch('/sales/{id}/mark-as-paid', [SaleController::class, 'markAsPaid'])->name('sales.mark-as-paid');
     Route::patch('/sales/{id}/annul', [SaleController::class, 'annul'])->name('sales.annul');
+
+    // Purchases routes
+    Route::resource('purchases', PurchaseController::class);
+    Route::patch('/purchases/{id}/mark-as-paid', [PurchaseController::class, 'markAsPaid'])->name('purchases.mark-as-paid');
+    Route::patch('/purchases/{id}/annul', [PurchaseController::class, 'annul'])->name('purchases.annul');
 
     // Stock Movements History (read-only for audit)
     Route::get('/stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
