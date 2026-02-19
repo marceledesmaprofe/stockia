@@ -30,6 +30,9 @@
                     <x-nav-link :href="route('stock-movements.index')" :active="request()->routeIs('stock-movements.*')">
                         {{ __('Stock History') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('stock-adjustments.index')" :active="request()->routeIs('stock-adjustments.*')">
+                        {{ __('Stock Adjustments') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -99,6 +102,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('stock-movements.index')" :active="request()->routeIs('stock-movements.*')">
                 {{ __('Stock History') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('stock-adjustments.index')" :active="request()->routeIs('stock-adjustments.*')">
+                {{ __('Stock Adjustments') }}
             </x-responsive-nav-link>
         </div>
 
