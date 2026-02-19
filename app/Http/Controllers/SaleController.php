@@ -256,6 +256,47 @@ class SaleController extends Controller
     }
 
     /**
+     * Mark a pending sale as paid.
+     */
+    public function markAsPaid(string $id)
+    {
+        DB::beginTransaction();
+        try {
+            $sale = Sale::findOrFail($id);
+
+            // Verify the sale belongs to user
+            if ($sale->user_id !== auth()->id()) {
+                abort(403, 'Unauthorized access to sale.');
+            }
+
+            // Check if sale is already paid or annulled
+            if ($sale->status === 'PAGADA') {
+                return redirect()->route('sales.show', $sale->id)
+                    ->with('info', 'This sale is already paid.');
+            }
+
+            if ($sale->status === 'ANULADA') {
+                return redirect()->route('sales.show', $sale->id)
+                    ->with('error', 'Cannot mark an annulled sale as paid.');
+            }
+
+            // Update sale status
+            $sale->status = 'PAGADA';
+            $sale->save();
+
+            DB::commit();
+
+            return redirect()->route('sales.show', $sale->id)
+                ->with('success', "Sale #{$sale->id} has been marked as paid.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error marking sale as paid: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'There was an error marking the sale as paid. Please try again later.');
+        }
+    }
+
+    /**
      * Annull a sale (creates reverse stock movements).
      */
     public function annul(string $id)

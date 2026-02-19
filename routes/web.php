@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
 
     // Sales routes
     Route::resource('sales', SaleController::class);
+    Route::patch('/sales/{id}/mark-as-paid', [SaleController::class, 'markAsPaid'])->name('sales.mark-as-paid');
     Route::patch('/sales/{id}/annul', [SaleController::class, 'annul'])->name('sales.annul');
 
     // Stock Movements History (read-only for audit)

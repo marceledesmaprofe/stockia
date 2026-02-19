@@ -123,6 +123,16 @@
                 </div>
 
                 <div class="flex space-x-3">
+                    @if($sale->status === 'PENDIENTE')
+                        <form action="{{ route('sales.mark-as-paid', $sale->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to mark this sale as paid?');">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                Mark as Paid
+                            </button>
+                        </form>
+                    @endif
+
                     @if($sale->status !== 'ANULADA')
                         <form action="{{ route('sales.annul', $sale->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to annul this sale? This will restore the stock for all products.');">
                             @csrf
