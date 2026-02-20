@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\Product;
-use App\Models\User;
+use App\Models\Supplier;
 use App\Traits\RecordsStockMovements;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -55,7 +55,7 @@ class PurchaseController extends Controller
             $purchases = $query->orderBy($sortBy, $sortOrder)->paginate(20);
 
             // Get suppliers for filter dropdown
-            $suppliers = User::all();
+            $suppliers = Supplier::where('user_id', auth()->id())->get();
 
             return view('purchases.index', compact('purchases', 'suppliers'));
         } catch (\Exception $e) {
@@ -73,7 +73,7 @@ class PurchaseController extends Controller
             $products = Product::where('user_id', auth()->id())
                 ->where('status', 1)
                 ->get();
-            $suppliers = User::all();
+            $suppliers = Supplier::where('user_id', auth()->id())->get();
 
             return view('purchases.create', compact('products', 'suppliers'));
         } catch (\Exception $e) {
@@ -93,7 +93,7 @@ class PurchaseController extends Controller
             \Log::info('Products input:', ['products' => $request->input('products')]);
 
             $validatedData = $request->validate([
-                'supplier_id' => 'nullable|exists:users,id',
+                'supplier_id' => 'nullable|exists:suppliers,id',
                 'purchase_date' => 'required|date',
                 'payment_method' => 'required|in:EFECTIVO,TRANSFERENCIA,TARJETA,OTROS',
                 'status' => 'required|in:PENDIENTE,PAGADA,ANULADA',

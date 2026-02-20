@@ -42,7 +42,7 @@
 
                         <div>
                             <h3 class="text-sm font-medium text-gray-500">Supplier</h3>
-                            <p class="mt-1 text-gray-900">{{ $purchase->supplier ? $purchase->supplier->name : 'Walk-in Supplier' }}</p>
+                            <p class="mt-1 text-gray-900">{{ $purchase->supplier ? $purchase->supplier->full_name : 'Walk-in Supplier' }}</p>
                         </div>
 
                         <div>

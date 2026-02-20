@@ -31,7 +31,10 @@
                                 <option value="">Walk-in Supplier</option>
                                 @foreach($suppliers as $supplier)
                                     <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
-                                        {{ $supplier->name }}
+                                        {{ $supplier->full_name }}
+                                        @if($supplier->document_type && $supplier->document_number)
+                                            - {{ $supplier->document_type }}: {{ $supplier->document_number }}
+                                        @endif
                                     </option>
                                 @endforeach
                             </select>
