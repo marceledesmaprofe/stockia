@@ -31,7 +31,10 @@
                                 <option value="">Walk-in Customer</option>
                                 @foreach($customers as $customer)
                                     <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
-                                        {{ $customer->name }}
+                                        {{ $customer->full_name }}
+                                        @if($customer->document_type && $customer->document_number)
+                                            - {{ $customer->document_type }}: {{ $customer->document_number }}
+                                        @endif
                                     </option>
                                 @endforeach
                             </select>

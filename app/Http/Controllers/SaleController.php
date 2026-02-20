@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Product;
-use App\Models\User;
+use App\Models\Customer;
 use App\Traits\RecordsStockMovements;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -55,7 +55,7 @@ class SaleController extends Controller
             $sales = $query->orderBy($sortBy, $sortOrder)->paginate(20);
 
             // Get customers for filter dropdown
-            $customers = User::all();
+            $customers = Customer::where('user_id', auth()->id())->get();
 
             return view('sales.index', compact('sales', 'customers'));
         } catch (\Exception $e) {
@@ -73,8 +73,8 @@ class SaleController extends Controller
             $products = Product::where('user_id', auth()->id())
                 ->where('status', 1)
                 ->get();
-            $customers = User::all();
-            
+            $customers = Customer::where('user_id', auth()->id())->get();
+
             return view('sales.create', compact('products', 'customers'));
         } catch (\Exception $e) {
             \Log::error('Error showing create sale form: ' . $e->getMessage());
@@ -93,7 +93,7 @@ class SaleController extends Controller
             \Log::info('Products input:', ['products' => $request->input('products')]);
             
             $validatedData = $request->validate([
-                'customer_id' => 'nullable|exists:users,id',
+                'customer_id' => 'nullable|exists:customers,id',
                 'sale_date' => 'required|date',
                 'payment_method' => 'required|in:EFECTIVO,TRANSFERENCIA,TARJETA,OTROS',
                 'status' => 'required|in:PENDIENTE,PAGADA,ANULADA',

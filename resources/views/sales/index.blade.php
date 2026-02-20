@@ -31,7 +31,7 @@
                                 <option value="">All Customers</option>
                                 @foreach($customers as $customer)
                                     <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
-                                        {{ $customer->name }}
+                                        {{ $customer->full_name }}
                                     </option>
                                 @endforeach
                             </select>

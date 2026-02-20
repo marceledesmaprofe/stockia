@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\PurchaseController;
@@ -14,9 +15,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    // Product and Category management routes
+    // Product, Category and Customer management routes
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('customers', CustomerController::class);
+    Route::get('/customers/search', [CustomerController::class, 'search'])->name('customers.search');
 
     // Sales routes
     Route::resource('sales', SaleController::class);
@@ -41,6 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/export/pdf', [ProductController::class, 'exportPdf'])->name('products.export.pdf');
     Route::get('/categories/export/csv', [CategoryController::class, 'exportCsv'])->name('categories.export.csv');
     Route::get('/categories/export/pdf', [CategoryController::class, 'exportPdf'])->name('categories.export.pdf');
+    Route::get('/customers/export/csv', [CustomerController::class, 'exportCsv'])->name('customers.export.csv');
+    Route::get('/customers/export/pdf', [CustomerController::class, 'exportPdf'])->name('customers.export.pdf');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
